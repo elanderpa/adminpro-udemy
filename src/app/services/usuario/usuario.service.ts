@@ -18,14 +18,24 @@ declare const gapi: any;
 export class UsuarioService {
 
   public auth2: any;
+  public usuario: Usuario;
 
   constructor(private http: HttpClient, private router: Router, private ngZone: NgZone) {
     this.googleInit();
   }
 
+  get token() {
+    return localStorage.getItem('token') || '';
+  }
+
+  get uid() {
+    console.log('uid', this.usuario);
+    return this.usuario.uid || '';
+  }
+
   public googleInit() {
 
-    return new Promise( resolve => {
+    return new Promise(resolve => {
       gapi.load('auth2', () => {
         this.auth2 = gapi.auth2.init({
           client_id: '609263184715-q0r2b549uphfsgsk3nh44bc0tidfi70a.apps.googleusercontent.com',
@@ -40,7 +50,7 @@ export class UsuarioService {
 
   public logout() {
     localStorage.removeItem('token');
-    this.auth2.signOut().then( () => {
+    this.auth2.signOut().then(() => {
       this.ngZone.run(() => {
         this.router.navigateByUrl('/login');
       });
@@ -50,19 +60,32 @@ export class UsuarioService {
   public validarToken(): Observable<boolean> {
 
     const url = `${URL_SERVICIOS}/login/renew`;
-    const token = localStorage.getItem('token') || '';
 
     return this.http.get(url, {
       headers: {
-        'x-token': token
+        'x-token': this.token
       }
     }).pipe(
-      tap((resp: any) => {
-        console.log('tap', resp);
+      map((resp: any) => {
+
+        const {
+          nombre,
+          email,
+          password,
+          google,
+          role,
+          img = '',
+          uid
+        } = resp.usuario;
+
+        this.usuario = new Usuario(nombre, email, '', img, role, google, uid);
         localStorage.setItem('token', resp.token);
+        return true;
       }),
-      map(resp => true),
-      catchError(err => of(false))
+      catchError(err => {
+        console.log('err', err);
+        return of(false);
+      })
     );
   }
 
@@ -81,13 +104,29 @@ export class UsuarioService {
         }));
   }
 
+  public actualizarPerfil(data: {email: string, nombre: string, role: string}) {
+
+    const url = `${URL_SERVICIOS}/usuarios/${this.uid}`;
+
+    data = {
+      ...data,
+      role: this.usuario.role
+    }
+
+    return this.http.put(url, data, {
+      headers: {
+        'x-token': this.token
+      }
+    });
+
+  }
+
   public login(formData: LoginForm) {
 
     const url = `${URL_SERVICIOS}/login`;
 
     return this.http.post(url, formData).pipe(
       tap((resp: any) => {
-        console.log('tap', resp);
         localStorage.setItem('token', resp.token);
       })
     );
@@ -96,10 +135,8 @@ export class UsuarioService {
   public loginGoogle(token) {
 
     const url = `${URL_SERVICIOS}/login/google`;
-    console.log('tokenseje', token);
     return this.http.post(url, { token }).pipe(
       tap((resp: any) => {
-        console.log('tap', resp);
         localStorage.setItem('token', resp.token);
       })
     );

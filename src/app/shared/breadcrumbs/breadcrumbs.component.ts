@@ -20,10 +20,9 @@ export class BreadcrumbsComponent implements OnInit {
   ) {
 
     this.getDataRoute().subscribe((data: any) => {
-      console.log(data);
       this.titulo = data.titulo;
       this.title.setTitle(this.titulo);
-      
+
       const metaTag: MetaDefinition = {
         name: 'description',
         content: this.titulo

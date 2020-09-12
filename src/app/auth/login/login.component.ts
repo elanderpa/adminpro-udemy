@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { UsuarioService } from '../services/usuario/usuario.service';
+import { UsuarioService } from 'src/app/services/usuario/usuario.service';
 import Swal from 'sweetalert2';
 
 declare function init_plugins();
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
     this.forma.setValue({
       email: localStorage.getItem('email') || '',
       password: '',
-      remember: false
+      remember: localStorage.getItem('email') || false
     });
   }
 
@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
       } else {
         localStorage.removeItem('email');
       }
-
+      console.log('dash');
       this.router.navigateByUrl('/');
     }, (err) => {
       Swal.fire('Error', err.error.mensaje, 'error');

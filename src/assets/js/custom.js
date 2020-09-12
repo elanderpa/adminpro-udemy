@@ -161,3 +161,5 @@ function init_plugins() {
   });
 
 }
+
+init_plugins();
