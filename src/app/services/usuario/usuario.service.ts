@@ -9,6 +9,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { resolve } from 'url';
+import { CargarUsuario } from '../../interface/cargar-usuarios.interface';
 
 declare const gapi: any;
 
@@ -31,6 +32,14 @@ export class UsuarioService {
   get uid() {
     console.log('uid', this.usuario);
     return this.usuario.uid || '';
+  }
+
+  get headers() {
+    return {
+      headers: {
+        'x-token': this.token
+      }
+    };
   }
 
   public googleInit() {
@@ -140,5 +149,36 @@ export class UsuarioService {
         localStorage.setItem('token', resp.token);
       })
     );
+  }
+
+  public cargarUsuarios(desde: number = 0) {
+
+    const url = `${URL_SERVICIOS}/usuarios?desde=${desde}`;
+
+    return this.http.get<CargarUsuario>(url, this.headers)
+      .pipe(
+        map(resp => {
+          const usuarios = resp.usuarios.map(user => new Usuario(user.nombre, user.email, '', user.img, user.role, user.google, user.uid));
+          return {
+            total: resp.total,
+            usuarios
+          }
+        })
+      );
+
+  }
+
+  public eliminarUsuario(usuario: Usuario) {
+    const url = `${URL_SERVICIOS}/usuarios/${usuario.uid}`;
+
+    return this.http.delete(url, this.headers);
+  }
+
+  public guardarUsuario(usuario: Usuario) {
+
+    const url = `${URL_SERVICIOS}/usuarios/${usuario.uid}`;
+
+    return this.http.put(url, usuario, this.headers);
+
   }
 }

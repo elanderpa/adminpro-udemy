@@ -19,6 +19,9 @@ import { RxjsComponent } from './rxjs/rxjs.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { ComponentsModule } from '../components/components.module';
 
+// Mantenimietos
+import { UsuariosComponent } from './mantenimientos/usuarios/usuarios.component';
+
 @NgModule({
   declarations: [
     DashboardComponent,
@@ -29,6 +32,7 @@ import { ComponentsModule } from '../components/components.module';
     PromesasComponent,
     RxjsComponent,
     PerfilComponent,
+    UsuariosComponent,
   ],
   imports: [
     CommonModule,
