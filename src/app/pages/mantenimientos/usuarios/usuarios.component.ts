@@ -1,14 +1,14 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { UsuarioService } from "../../../services/usuario/usuario.service";
-import { Usuario } from "src/app/models/usuario.model";
-import { BusquedaService } from "../../../services/busqueda.service";
-import Swal from "sweetalert2";
-import { ModalImagenService } from "../../../services/modal-imagen.service";
-import { Subscription } from "rxjs/internal/Subscription";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { UsuarioService } from '../../../services/usuario/usuario.service';
+import { Usuario } from 'src/app/models/usuario.model';
+import { BusquedaService } from '../../../services/busqueda.service';
+import Swal from 'sweetalert2';
+import { ModalImagenService } from '../../../services/modal-imagen.service';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
-  selector: "app-usuarios",
-  templateUrl: "./usuarios.component.html",
+  selector: 'app-usuarios',
+  templateUrl: './usuarios.component.html',
   styles: [],
 })
 export class UsuariosComponent implements OnInit, OnDestroy {
@@ -67,30 +67,30 @@ export class UsuariosComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.busquedaService.buscar("usuarios", termino).subscribe((resultados) => {
+    this.busquedaService.buscar('usuarios', termino).subscribe((resultados: Usuario[]) => {
       this.usuarios = resultados;
     });
   }
 
   public eliminarUsuario(usuario: Usuario) {
     if (usuario.uid === this.usuarioService.uid) {
-      return Swal.fire("Error", "No puede borrarse a si mismo");
+      return Swal.fire('Error', 'No puede borrarse a si mismo');
     }
 
     Swal.fire({
-      title: "Borrar usuario?",
+      title: 'Borrar usuario?',
       text: `Esta apunto de borrar a ${usuario.nombre}`,
-      icon: "question",
+      icon: 'question',
       showCancelButton: true,
-      confirmButtonText: "Si Borrarlo",
+      confirmButtonText: 'Si Borrarlo',
     }).then((result) => {
       if (result.isConfirmed) {
         this.usuarioService.eliminarUsuario(usuario).subscribe((res) => {
           this.cargarUsuarios();
           Swal.fire(
-            "Usuario borrado",
+            'Usuario borrado',
             `${usuario.nombre} fue eliminado correctamente`,
-            "success"
+            'success'
           );
         });
       }
@@ -104,6 +104,6 @@ export class UsuariosComponent implements OnInit, OnDestroy {
   }
 
   public abrirModal(usuario: Usuario) {
-    this.modalImagenService.abrirModal("usuarios", usuario.uid, usuario.img);
+    this.modalImagenService.abrirModal('usuarios', usuario.uid, usuario.img);
   }
 }

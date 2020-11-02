@@ -89,7 +89,7 @@
       "options": [
         "ban-keywords",
         "check-format",
-        "allow-leading-underscore",
+        "allow-leading-underscore"
       ]
     }
   },
