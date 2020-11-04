@@ -86,7 +86,7 @@ export class RegisterComponent implements OnInit {
         this.router.navigateByUrl('/');
       }, (err) => {
         // Si succede un error
-        Swal.fire('Error', err.error.mensaje, 'error');
+        Swal.fire('Error', err.error.msg, 'error');
       });
   }
 

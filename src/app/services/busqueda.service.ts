@@ -40,6 +40,12 @@ export class BusquedaService {
     return resultados;
   }
 
+  public busquedaGlobal(termino: string) {
+    const url = `${URL_SERVICIOS}/todo/${termino}`;
+
+    return this.http.get(url, this.headers);
+  }
+
   public buscar(tipo: 'usuarios' | 'medicos' | 'hospitales', termino: string) {
     const url = `${URL_SERVICIOS}/todo/coleccion/${tipo}/${termino}`;
 

@@ -29,6 +29,10 @@ export class UsuarioService {
     return localStorage.getItem('token') || '';
   }
 
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE' {
+    return this.usuario.role;
+  }
+
   get uid() {
     console.log('uid', this.usuario);
     return this.usuario.uid || '';
@@ -59,6 +63,7 @@ export class UsuarioService {
 
   public logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('menu');
     this.auth2.signOut().then(() => {
       this.ngZone.run(() => {
         this.router.navigateByUrl('/login');
@@ -88,7 +93,7 @@ export class UsuarioService {
         } = resp.usuario;
 
         this.usuario = new Usuario(nombre, email, '', img, role, google, uid);
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
         return true;
       }),
       catchError(err => {
@@ -100,7 +105,7 @@ export class UsuarioService {
 
   public crearUsuario(usuario: Usuario) {
 
-    const url = `${URL_SERVICIOS}/usuario`;
+    const url = `${URL_SERVICIOS}/usuarios`;
 
     return this.http.post(url, usuario)
       .pipe(
@@ -113,7 +118,7 @@ export class UsuarioService {
         }));
   }
 
-  public actualizarPerfil(data: {email: string, nombre: string, role: string}) {
+  public actualizarPerfil(data: { email: string, nombre: string, role: string }) {
 
     const url = `${URL_SERVICIOS}/usuarios/${this.uid}`;
 
@@ -136,7 +141,7 @@ export class UsuarioService {
 
     return this.http.post(url, formData).pipe(
       tap((resp: any) => {
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
       })
     );
   }
@@ -146,7 +151,7 @@ export class UsuarioService {
     const url = `${URL_SERVICIOS}/login/google`;
     return this.http.post(url, { token }).pipe(
       tap((resp: any) => {
-        localStorage.setItem('token', resp.token);
+        this.guardarLocalStorage(resp.token, resp.menu);
       })
     );
   }
@@ -180,5 +185,10 @@ export class UsuarioService {
 
     return this.http.put(url, usuario, this.headers);
 
+  }
+
+  private guardarLocalStorage(token: string, menu: any) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('menu', JSON.stringify(menu));
   }
 }

@@ -16,11 +16,14 @@ export class HospitalesComponent implements OnInit, OnDestroy {
 
   public hospitales: Hospital[] = [];
   public cargando: boolean = true;
+
   private imgSubs: Subscription;
 
-  constructor(private hospialService: HospitalService,
-              private modalImagenService: ModalImagenService,
-              private busquedaService: BusquedaService) { }
+  constructor(
+    private hospialService: HospitalService,
+    private modalImagenService: ModalImagenService,
+    private busquedaService: BusquedaService
+  ) { }
 
   ngOnInit() {
     this.cargarHospitales();
